@@ -1,0 +1,552 @@
+{
+  "source": "Local recipe + image alpha bounds; original sidecars unavailable",
+  "assets": [
+    {
+      "key": "ARCHER_A",
+      "file": "archer_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "ENEMIES_A",
+      "file": "enemies_a-transparent.webp",
+      "width": 2352,
+      "height": 1200,
+      "frames": 18
+    },
+    {
+      "key": "ENEMIES_B",
+      "file": "enemies_b-transparent.webp",
+      "width": 2352,
+      "height": 816,
+      "frames": 12
+    },
+    {
+      "key": "BOSS_STAG",
+      "file": "boss_stag-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "EFFECTS",
+      "file": "effects-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SHRINES",
+      "file": "shrines-transparent.webp",
+      "width": 2352,
+      "height": 816,
+      "frames": 12
+    },
+    {
+      "key": "WORLD_ANIM",
+      "file": "world_anim-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "BRANCH_TILES",
+      "file": "branch_tiles-transparent.webp",
+      "width": 1248,
+      "height": 576,
+      "frames": 3
+    },
+    {
+      "key": "VINE_TILES",
+      "file": "vine_tiles-transparent.webp",
+      "width": 608,
+      "height": 1136,
+      "frames": 2
+    },
+    {
+      "key": "PROPS",
+      "file": "props-transparent.webp",
+      "width": 2352,
+      "height": 1200,
+      "frames": 18
+    },
+    {
+      "key": "TREEHOUSE",
+      "file": "treehouse-transparent.webp",
+      "width": 915,
+      "height": 887,
+      "frames": 0
+    },
+    {
+      "key": "SOFTWOOD_KIT",
+      "file": "atlas.png",
+      "width": 3120,
+      "height": 1040,
+      "frames": 0
+    },
+    {
+      "key": "BARK_KIT",
+      "file": "atlas.png",
+      "width": 3120,
+      "height": 1040,
+      "frames": 0
+    },
+    {
+      "key": "BACKDROP",
+      "file": "backdrop.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "ARCHER_B",
+      "file": "archer_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "ARCHER_C",
+      "file": "archer_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN1_A",
+      "file": "skin1_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN1_B",
+      "file": "skin1_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN1_C",
+      "file": "skin1_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN2_A",
+      "file": "skin2_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN2_B",
+      "file": "skin2_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN2_C",
+      "file": "skin2_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN4_A",
+      "file": "skin4_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN3_A",
+      "file": "skin3_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN3_C",
+      "file": "skin3_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN3_B",
+      "file": "skin3_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN5_A",
+      "file": "skin5_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN4_B",
+      "file": "skin4_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN5_B",
+      "file": "skin5_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN5_C",
+      "file": "skin5_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN4_C",
+      "file": "skin4_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN6_A",
+      "file": "skin6_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN6_C",
+      "file": "skin6_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN6_B",
+      "file": "skin6_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN7_A",
+      "file": "skin7_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN7_B",
+      "file": "skin7_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN8_A",
+      "file": "skin8_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN8_B",
+      "file": "skin8_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN7_C",
+      "file": "skin7_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN8_C",
+      "file": "skin8_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN10_A",
+      "file": "skin10_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN10_C",
+      "file": "skin10_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN9_A",
+      "file": "skin9_a-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN9_B",
+      "file": "skin9_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN10_B",
+      "file": "skin10_b-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "SKIN9_C",
+      "file": "skin9_c-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "MONSTERS_1",
+      "file": "monsters_1-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "MONSTERS_2",
+      "file": "monsters_2-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "MONSTERS_3",
+      "file": "monsters_3-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "MONSTERS_4",
+      "file": "monsters_4-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "MONSTERS_5",
+      "file": "monsters_5-transparent.webp",
+      "width": 2352,
+      "height": 1584,
+      "frames": 24
+    },
+    {
+      "key": "BOSS_2",
+      "file": "boss_2-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_1",
+      "file": "boss_1-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_3",
+      "file": "boss_3-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_6",
+      "file": "boss_6-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_4",
+      "file": "boss_4-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_5",
+      "file": "boss_5-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_7",
+      "file": "boss_7-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_10",
+      "file": "boss_10-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_8",
+      "file": "boss_8-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BOSS_9",
+      "file": "boss_9-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "BG_1",
+      "file": "bg_1.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_2",
+      "file": "bg_2.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_3",
+      "file": "bg_3.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_5",
+      "file": "bg_5.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_6",
+      "file": "bg_6.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_4",
+      "file": "bg_4.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_7",
+      "file": "bg_7.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_9",
+      "file": "bg_9.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_8",
+      "file": "bg_8.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "BG_10",
+      "file": "bg_10.webp",
+      "width": 864,
+      "height": 1536,
+      "frames": 0
+    },
+    {
+      "key": "AREA_PROPS",
+      "file": "area_props-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 14
+    },
+    {
+      "key": "AREA_SHOTS",
+      "file": "area_shots-transparent.webp",
+      "width": 1584,
+      "height": 1584,
+      "frames": 16
+    },
+    {
+      "key": "SKIN_ICONS",
+      "file": "skin_icons-transparent.webp",
+      "width": 1584,
+      "height": 1200,
+      "frames": 11
+    }
+  ],
+  "modules": [
+    "game js/android-main.js",
+    "game js/android.css",
+    "game js/assets.json",
+    "game js/game/areaMaps.js",
+    "game js/game/audio.js",
+    "game js/game/boss.js",
+    "game js/game/bossGeneric.js",
+    "game js/game/combat.js",
+    "game js/game/content.js",
+    "game js/game/enemies.js",
+    "game js/game/game.js",
+    "game js/game/hud.js",
+    "game js/game/input.js",
+    "game js/game/loader.js",
+    "game js/game/objects.js",
+    "game js/game/physics.js",
+    "game js/game/player.js",
+    "game js/game/render.js",
+    "game js/game/save.js",
+    "game js/game/scene.js",
+    "game js/game/terrain.js",
+    "game js/game/world.js",
+    "game js/game/worldMaps.js",
+    "game js/offline-terrain.js",
+    "game js/styles.css",
+    "game js/tweaks.json"
+  ],
+  "totalFrames": 1250
+}

@@ -1,0 +1,108 @@
+/* Android host chrome: pause button, pause menu, tutorial and error overlays. */
+.native-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--safe-t) + 20px) calc(var(--safe-r) + 20px) calc(var(--safe-b) + 20px) calc(var(--safe-l) + 20px);
+  background: radial-gradient(ellipse at center, rgba(6, 18, 14, 0.82), rgba(3, 9, 7, 0.95));
+  overflow: auto;
+}
+
+.native-overlay section {
+  width: min(100%, 440px);
+  padding: 22px 20px 20px;
+  border: 1.5px solid var(--panel-edge);
+  border-radius: 22px;
+  background: linear-gradient(180deg, #1c3a30, #0b1d17);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 240, 200, 0.12);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.native-overlay h2 {
+  margin: 0 0 14px;
+  text-align: center;
+  color: var(--gold);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.native-overlay button {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 18px;
+  border: 1.5px solid var(--panel-edge-soft);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #21463a, #11291f);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+.native-overlay button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.native-overlay button.primary {
+  background: linear-gradient(180deg, #ffe0a0, #d9a64b);
+  border-color: var(--gold-hi);
+  color: #1d2a16;
+  font-weight: 800;
+}
+
+.native-overlay button.ghost {
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tips {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tips li {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(8, 22, 17, 0.55);
+  border: 1px solid var(--panel-edge-soft);
+}
+
+.tips b {
+  display: block;
+  color: var(--gold-hi);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.keys {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: var(--mint);
+}
+
+#fatal-message {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}

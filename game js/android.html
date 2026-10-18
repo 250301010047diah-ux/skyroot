@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; media-src 'self' blob:">
+  <title>Skyroot — The Last Archer</title>
+  <link rel="icon" href="/images/logo.png">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <div id="app"></div>
+  <button id="pause" class="icon-btn pause-btn" aria-label="Jeda" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg></button>
+  <div id="pause-menu" class="native-overlay" hidden>
+    <section>
+      <h2>Jeda</h2>
+      <div class="menu-list">
+        <button id="resume" class="primary">Lanjutkan</button>
+        <button id="respawn">Kembali ke checkpoint</button>
+        <button id="map">Peta</button>
+        <button id="sound" aria-pressed="false">Suara: Aktif</button>
+        <button id="help">Cara bermain</button>
+        <button id="home" class="ghost">Menu utama</button>
+      </div>
+    </section>
+  </div>
+  <div id="tutorial" class="native-overlay" hidden>
+    <section>
+      <h2>Petualangan Skyroot</h2>
+      <ul class="tips">
+        <li><b>Bergerak</b>Geser joystick kiri untuk bergerak dan memanjat.</li>
+        <li><b>Lompat</b>Tombol hijau ↑. Tahan untuk lompatan tinggi.</li>
+        <li><b>Busur</b>Tombol emas. Tahan, geser untuk membidik, lalu lepas.</li>
+        <li><b>Sulur</b>Dekati bagian bawahnya lalu tahan joystick ke atas. Lompat sambil mengarah ke samping untuk pindah ke platform.</li>
+        <li><b>Jelajah</b>Semua 11 wilayah dan 11 skin terbuka lewat peta dan lemari di kanan atas. Dash dan panah pijakan ada di relik Akar Berkabut.</li>
+      </ul>
+      <button id="play" class="primary">MULAI BERMAIN</button>
+    </section>
+  </div>
+  <div id="fatal" class="native-overlay" hidden><section><h2>Game gagal dimuat</h2><p id="fatal-message"></p><button id="retry" class="primary">COBA LAGI</button></section></div>
+  <script src="game.js"></script>
+</body>
+</html>

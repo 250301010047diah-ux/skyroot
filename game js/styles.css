@@ -1,0 +1,1034 @@
+/* Template contract — keep this sizing block intact when re-theming.
+   The game runs in an iframe inside iOS/Android WebViews, where viewport
+   units (100vh/100dvh/100vw) go stale after the view scrolls or hides and
+   leave blank bands; this container-percentage chain is what sizes the game
+   reliably. Restyle colors, fonts, and visuals freely, but do not replace
+   these sizing/overflow rules or size any root container in viewport units. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Low-specificity flex/grid shrink floor: intrinsic content must not widen or
+   deepen a layout track beyond the handheld frame. Component minimums win. */
+:where(#app *) {
+  min-width: 0;
+  min-height: 0;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #0b1714;
+  color: #eafff6;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  /* Text strokes are centered on glyph contours. Paint the fill last so an
+     outline stays outside instead of cutting into counters and thin strokes. */
+  paint-order: stroke fill;
+  /* Size container: children size type/spacing in cqw/cqh/cqmin units,
+     which track the actual game frame (viewport units are banned above). */
+  container-type: size;
+}
+
+/* Do not inherit the HTML text safeguard into SVG artwork, whose fill/stroke
+   layering may intentionally use the SVG default. */
+#app svg {
+  paint-order: normal;
+}
+
+canvas,
+.game-surface {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Template contract — fit-mechanics primitives. Layout is top-down: the
+   frame is the budget and content adapts to its box, so overflow is
+   impossible by construction. These classes carry ONLY fit mechanics —
+   shrink/wrap behavior, min-width: 0 (flex children otherwise refuse to
+   shrink below their text), truncation, container-query type scaling, 44px
+   touch minimums, and gaps. They are deliberately unstyled: their look
+   (colors, backgrounds, radii, borders, fonts) is yours to build from the
+   game's art direction. Custom controls and layouts are welcome too — keep
+   the same fit rules. Do not remove the sizing/min/max/overflow/gap rules. */
+
+/* Horizontal band of HUD stats. Wraps as a final containment fallback;
+   compact handheld frames can be short as well as narrow, so keep the
+   primary row iconic and hide/truncate secondary labels before relying on a
+   second line. Grid-track friendly: use as the `auto` rows of a
+   `grid-template-rows: auto minmax(0, 1fr) auto` page layout. */
+.hud-row {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  gap: clamp(6px, 2cqw, 14px);
+  padding: clamp(6px, 2cqmin, 12px);
+}
+
+/* Compact HUD stat (score, timer, lives). Truncates rather than breaking
+   layout as a last resort; add `flex-shrink: 0` to a badge that must never
+   truncate (score, timer) so decorative neighbors compress first. */
+.badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-inline: 0.4em;
+  font-size: clamp(12px, 3.5cqw, 18px);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Discrete status pips (hearts, lives, stars, ammo). Pips are fixed-size
+   flex items, NEVER repeated glyphs inside a truncating text run: glyphs
+   like ♥ resolve through different fallback fonts per browser, take
+   different widths, and get clipped by ellipsis in Firefox/Safari but not
+   Chrome. The fixed box is what makes a pip safe — its content can be
+   whatever fits the game: a glyph centered in the box (the box neutralizes
+   glyph-width differences), a generated sprite via `background: url(...)
+   center/contain no-repeat`, or an SVG/mask shape. */
+.pip-row {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(2px, 0.8cqw, 6px);
+}
+
+.pip {
+  flex: 0 0 auto;
+  width: clamp(12px, 4cqw, 20px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Touch-control band. */
+.controls-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  gap: clamp(12px, 3cqw, 20px);
+  padding: clamp(8px, 2cqmin, 14px);
+}
+
+/* Finger-sized control. 44px is the minimum touch target; the gap above is
+   the minimum separation. flex: 0 1 auto lets a crowded row shrink buttons
+   down to (but never below) the minimum. overflow keeps legacy raw-text
+   buttons contained; wrap text in .control-label for a visible ellipsis. */
+.control-btn {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  min-width: 44px;
+  max-width: 100%;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.5em 1em;
+  font-size: clamp(13px, 3.5cqw, 18px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.control-label {
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: 0.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===================== Skyroot ===================== */
+/* Forest-and-gold theme shared with the Flutter menu. Safe-area insets come
+   from env() in browsers; the Android host overrides them with the real
+   system/cutout insets so HUD and controls never sit under a notch or the
+   gesture bar. */
+:root {
+  --ink: #07130f;
+  --panel: rgba(9, 24, 19, 0.86);
+  --panel-hi: rgba(26, 52, 42, 0.92);
+  --panel-edge: rgba(239, 203, 128, 0.42);
+  --panel-edge-soft: rgba(239, 203, 128, 0.18);
+  --teal: #7fffe0;
+  --mint: #8ed9bb;
+  --heart: #ff5a52;
+  --gold: #efcb80;
+  --gold-hi: #ffe7ad;
+  --gold-deep: #9a6a22;
+  --text: #f3f7ec;
+  --muted: rgba(225, 238, 226, 0.74);
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --display: "Pixelify Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  /* Keep thumbs clear of the system gesture strip even when it reports 0. */
+  --safe-b-touch: max(var(--safe-b), 12px);
+}
+
+.game-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--text);
+}
+
+.game-root > .game-surface {
+  position: absolute;
+  inset: 0;
+}
+
+.ico {
+  width: 60%;
+  height: 60%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+/* ---- HUD */
+.hud {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(var(--safe-t) + clamp(8px, 2.4cqmin, 14px)) calc(var(--safe-r) + clamp(8px, 2.4cqmin, 14px)) 0 calc(var(--safe-l) + clamp(8px, 2.4cqmin, 14px));
+  pointer-events: none;
+}
+
+.hud-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1cqmin, 7px);
+  padding: clamp(6px, 1.6cqmin, 9px) clamp(9px, 2.2cqmin, 13px);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(22, 44, 35, 0.82), rgba(7, 19, 15, 0.82));
+  border: 1.5px solid var(--panel-edge);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 240, 200, 0.12);
+}
+
+.pip {
+  width: clamp(17px, 4.8cqmin, 24px);
+}
+
+.pip .ico {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.6;
+}
+
+.pip.heart.on .ico {
+  fill: var(--heart);
+  stroke: #4a0f0b;
+  filter: drop-shadow(0 0 3px rgba(255, 90, 82, 0.55));
+}
+
+.pip.heart.off .ico {
+  fill: rgba(40, 20, 20, 0.6);
+  stroke: rgba(255, 140, 130, 0.5);
+}
+
+.energy .pip {
+  width: clamp(12px, 3.6cqmin, 18px);
+}
+
+.pip.energy.on .ico {
+  fill: var(--teal);
+  stroke: #0a3a30;
+  filter: drop-shadow(0 0 3px rgba(127, 255, 224, 0.5));
+}
+
+.pip.energy.off .ico {
+  fill: rgba(20, 40, 36, 0.6);
+  stroke: rgba(127, 255, 224, 0.4);
+}
+
+.icon-btn {
+  pointer-events: auto;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--panel-edge);
+  background: radial-gradient(circle at 35% 28%, rgba(255, 240, 200, 0.16), transparent 58%), linear-gradient(180deg, #1d3a2f, #0a1a14);
+  color: var(--gold);
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4), var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s, border-color 0.15s;
+}
+
+.icon-btn .ico {
+  width: 54%;
+  height: 54%;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5));
+}
+
+.icon-btn:active {
+  transform: translateY(2px) scale(0.95);
+  border-color: var(--gold-hi);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 0 14px rgba(239, 203, 128, 0.35);
+}
+
+/* ---- Boss bar */
+.boss-bar {
+  position: absolute;
+  top: calc(var(--safe-t) + clamp(68px, 16cqmin, 88px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(72%, 340px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.boss-name {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: clamp(13px, 3.6cqmin, 18px);
+  color: var(--gold-hi);
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: rgba(40, 10, 8, 0.75);
+  border: 1px solid rgba(255, 120, 90, 0.5);
+  white-space: nowrap;
+  text-shadow: 0 1px 0 #000;
+}
+
+.boss-track {
+  width: 100%;
+  height: 12px;
+  border-radius: 7px;
+  background: rgba(10, 6, 6, 0.85);
+  border: 1.5px solid rgba(255, 211, 106, 0.6);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.boss-fill {
+  height: 100%;
+  background: linear-gradient(180deg, #ffb070, #d9472c 60%, #9c2414);
+  transform-origin: left center;
+  transition: transform 0.2s;
+}
+
+/* ---- Toast and speech */
+.toast {
+  position: absolute;
+  top: calc(var(--safe-t) + clamp(68px, 17cqmin, 96px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(88%, 420px);
+  padding: 9px 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(30, 56, 45, 0.94), rgba(9, 24, 19, 0.94));
+  border: 1.5px solid var(--panel-edge);
+  box-shadow: var(--shadow);
+  color: var(--gold-hi);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(13px, 3.4cqmin, 17px);
+  line-height: 1.3;
+  text-align: center;
+  pointer-events: none;
+}
+
+.speech {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: max-content;
+  max-width: min(70%, 260px);
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: #f6eed6;
+  border: 1.5px solid #c9a35a;
+  color: #2b1d10;
+  font-size: clamp(12px, 3.1cqmin, 14px);
+  line-height: 1.3;
+  pointer-events: none;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.28);
+}
+
+/* ---- Touch controls (shown once a touch happens) */
+.controls {
+  position: absolute;
+  left: var(--safe-l);
+  right: var(--safe-r);
+  bottom: var(--safe-b-touch);
+  height: min(56%, 300px);
+  pointer-events: none;
+  display: none;
+}
+
+.game-root.touch .controls {
+  display: block;
+}
+
+.joy-zone {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.joy {
+  position: absolute;
+  left: clamp(14px, 4cqmin, 26px);
+  bottom: clamp(8px, 3cqmin, 20px);
+  width: clamp(112px, 30cqmin, 144px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(8, 22, 18, 0.15) 30%, rgba(8, 22, 18, 0.55) 70%);
+  border: 2px solid rgba(239, 203, 128, 0.38);
+  box-shadow: 0 0 0 5px rgba(8, 22, 18, 0.25), inset 0 0 18px rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Direction ticks. */
+.joy::before {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(142, 217, 187, 0.28);
+  pointer-events: none;
+}
+
+.joy.active {
+  border-color: rgba(255, 231, 173, 0.75);
+  box-shadow: 0 0 0 5px rgba(8, 22, 18, 0.3), 0 0 22px rgba(239, 203, 128, 0.3), inset 0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.joy-knob {
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6dc, #e2bb6d 45%, #8a5c1d 100%);
+  border: 2px solid rgba(255, 246, 220, 0.85);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.action-cluster {
+  position: absolute;
+  right: clamp(10px, 3cqmin, 22px);
+  bottom: clamp(6px, 2cqmin, 16px);
+  width: clamp(184px, 48cqmin, 224px);
+  height: clamp(184px, 48cqmin, 224px);
+  pointer-events: none;
+}
+
+/* Game-pad buttons: domed face, coloured rim, pressed state sinks. */
+.act {
+  --act-a: #2f6f5c;
+  --act-b: #0d2a22;
+  --act-rim: rgba(142, 217, 187, 0.8);
+  --act-glow: rgba(142, 217, 187, 0.45);
+  position: absolute;
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2.5px solid var(--act-rim);
+  background: radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.28), transparent 46%), linear-gradient(180deg, var(--act-a), var(--act-b));
+  color: #ffffff;
+  padding: 0;
+  touch-action: none;
+  opacity: 0.92;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45), 0 8px 16px rgba(0, 0, 0, 0.35), inset 0 -4px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.06s, box-shadow 0.06s, opacity 0.1s;
+}
+
+.act .ico {
+  width: 52%;
+  height: 52%;
+  stroke-width: 2.4;
+  filter: drop-shadow(0 1.5px 0 rgba(0, 0, 0, 0.55));
+}
+
+.act.down {
+  opacity: 1;
+  transform: translateY(3px) scale(0.95);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45), 0 0 18px var(--act-glow), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.act-bow {
+  --act-a: #d39a3c;
+  --act-b: #6e4211;
+  --act-rim: var(--gold-hi);
+  --act-glow: rgba(255, 210, 120, 0.6);
+  right: 0;
+  bottom: 0;
+  width: 38%;
+  aspect-ratio: 1;
+}
+
+.act-bow .ico {
+  width: 56%;
+  height: 56%;
+}
+
+.act-bow.footing {
+  --act-a: #2aa58a;
+  --act-b: #0c463a;
+  --act-rim: var(--teal);
+  --act-glow: rgba(127, 255, 224, 0.6);
+}
+
+.act-bow.held {
+  opacity: 1;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45), 0 0 0 4px rgba(255, 231, 173, 0.25), 0 0 22px var(--act-glow);
+}
+
+.act-jump {
+  --act-a: #3b9a78;
+  --act-b: #11402f;
+  right: 3%;
+  bottom: 46%;
+  width: 30%;
+  aspect-ratio: 1;
+}
+
+.act-dash {
+  --act-a: #3f7fb8;
+  --act-b: #142d4a;
+  --act-rim: #a9d8ff;
+  --act-glow: rgba(150, 210, 255, 0.55);
+  right: 46%;
+  bottom: 2%;
+  width: 28%;
+  aspect-ratio: 1;
+}
+
+.act-swap {
+  --act-a: #4b5d57;
+  --act-b: #18241f;
+  --act-rim: rgba(225, 238, 226, 0.6);
+  right: 46%;
+  bottom: 42%;
+  width: 24%;
+  aspect-ratio: 1;
+}
+
+.act-swap .i-leaf {
+  display: none;
+}
+
+.act-swap.footing {
+  --act-a: #2aa58a;
+  --act-b: #0c463a;
+  --act-rim: var(--teal);
+  --act-glow: rgba(127, 255, 224, 0.6);
+}
+
+.act-swap.footing .i-leaf {
+  display: block;
+}
+
+.act-swap.footing .i-arrow {
+  display: none;
+}
+
+/* ---- Overlays */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--safe-t) + 16px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 16px) calc(var(--safe-l) + 16px);
+  background: radial-gradient(ellipse at center, rgba(4, 12, 10, 0.5), rgba(4, 12, 10, 0.82));
+}
+
+.panel {
+  width: min(92%, 380px);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(26, 52, 42, 0.97), rgba(8, 22, 17, 0.97));
+  border: 1.5px solid var(--panel-edge);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 240, 200, 0.12);
+  min-height: 0;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-edge-soft);
+}
+
+.panel-title,
+.end-title,
+.loading-title {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  font-size: clamp(18px, 5cqmin, 26px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-inline: 0.2em;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.map-sheet {
+  width: min(94%, 420px);
+  height: min(92cqh, 640px);
+  padding: 14px 14px 12px;
+  gap: 10px;
+}
+
+.map-frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: 16px;
+  border: 1.5px solid var(--panel-edge);
+  background: #07140f;
+  overflow: hidden;
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.55);
+}
+
+.map-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lg {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.lg-you { background: #fff6dc; box-shadow: 0 0 0 1.5px #0b1714, 0 0 0 3px rgba(255, 231, 173, 0.45); }
+.lg-cp { background: #7fffe0; }
+.lg-gate { background: #7fffe0; border-radius: 2px; }
+.lg-bell { background: #ffd36a; }
+
+.panel-stats {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.panel-stats span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(8, 22, 17, 0.6);
+  border: 1px solid var(--panel-edge-soft);
+}
+
+.panel-stats b {
+  color: var(--gold-hi);
+  font-weight: 700;
+}
+
+.chip-no {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(8, 22, 17, 0.55);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--mint);
+}
+
+.chip.on .chip-no {
+  background: rgba(60, 40, 8, 0.35);
+  color: #1d2a16;
+}
+
+.area-chips {
+  padding: 2px 2px 4px;
+  -webkit-mask-image: linear-gradient(to right, #000 82%, transparent);
+  mask-image: linear-gradient(to right, #000 82%, transparent);
+}
+
+.map-sheet .reset-btn {
+  min-height: 46px;
+  font-size: 13px;
+}
+
+.panel-stats,
+.end-sub {
+  font-size: clamp(12px, 3.2cqmin, 15px);
+  color: var(--muted);
+  text-align: center;
+}
+
+.end-title {
+  text-align: center;
+  font-size: min(9cqw, 12cqh, 40px);
+}
+
+.end-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.end-stats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.end-stats b {
+  font-family: var(--display);
+  font-size: clamp(20px, 6cqmin, 30px);
+  color: var(--gold-hi);
+}
+
+.end-stats span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.text-btn {
+  border-radius: 14px;
+  border: 1.5px solid var(--panel-edge-soft);
+  background: linear-gradient(180deg, #21463a, #11291f);
+  color: var(--text);
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.text-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.text-btn.primary {
+  background: linear-gradient(180deg, #ffe0a0, #d9a64b);
+  border-color: var(--gold-hi);
+  color: #1d2a16;
+}
+
+.loading {
+  background: radial-gradient(ellipse at 50% 40%, #12302a, var(--ink) 70%);
+}
+
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(70%, 260px);
+}
+
+.loading-title {
+  font-size: clamp(26px, 8cqmin, 38px);
+  letter-spacing: 0.12em;
+}
+
+.loading-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: rgba(239, 203, 128, 0.12);
+  border: 1px solid var(--panel-edge-soft);
+  overflow: hidden;
+}
+
+.loading-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--mint), var(--gold));
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.loading-msg {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.game-root.boss-on .toast {
+  top: calc(var(--safe-t) + clamp(112px, 27cqmin, 136px));
+}
+
+/* ---- Skins, skills, areas */
+.hud-actions {
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.hearts,
+.energy {
+  flex-wrap: wrap;
+  max-width: min(46cqw, 230px);
+}
+
+.act-skill {
+  --act-a: #6b4a9c;
+  --act-b: #26163f;
+  --act-rim: rgba(255, 211, 106, 0.45);
+  --act-glow: rgba(255, 211, 106, 0.55);
+  right: 40%;
+  bottom: 76%;
+  width: 26%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  color: rgba(255, 230, 160, 0.65);
+}
+
+.act-skill.ready {
+  --act-rim: var(--gold);
+  color: var(--gold-hi);
+  animation: skill-ready 1.6s ease-in-out infinite;
+}
+
+@keyframes skill-ready {
+  50% {
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45), 0 0 18px rgba(255, 211, 106, 0.55), inset 0 -4px 0 rgba(0, 0, 0, 0.25);
+  }
+}
+
+.skill-cd {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 12, 10, 0.62);
+  transform-origin: bottom center;
+  pointer-events: none;
+}
+
+.area-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  min-height: 36px;
+  max-width: 62%;
+  border-radius: 18px;
+  border: 1px solid var(--panel-edge-soft);
+  background: rgba(20, 50, 42, 0.9);
+  color: var(--text);
+  font-size: 12px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chip.on {
+  background: linear-gradient(180deg, #ffe0a0, #d9a64b);
+  border-color: var(--gold-hi);
+  color: #1d2a16;
+  font-weight: 700;
+}
+
+.panel.wide {
+  width: min(94%, 460px);
+}
+
+.skin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(78px, 22cqw), 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+  max-height: 52cqh;
+}
+
+.skin-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px 4px;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(142, 217, 187, 0.18);
+  background: linear-gradient(180deg, rgba(30, 60, 50, 0.9), rgba(12, 30, 24, 0.9));
+  color: var(--text);
+  font-size: clamp(10px, 2.6cqmin, 12px);
+  cursor: pointer;
+}
+
+.skin-card canvas {
+  width: 100%;
+  max-width: 72px;
+  aspect-ratio: 1;
+  height: auto;
+}
+
+.skin-card .control-label {
+  max-width: 100%;
+}
+
+.skin-card.locked canvas {
+  filter: grayscale(1) brightness(0.35);
+}
+
+.skin-card.locked {
+  color: rgba(234, 255, 246, 0.45);
+}
+
+.skin-card.sel {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.skin-card.on {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(110, 86, 30, 0.9), rgba(52, 40, 14, 0.9));
+  box-shadow: 0 0 12px rgba(239, 203, 128, 0.3);
+}
+
+.skin-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: clamp(12px, 3.1cqmin, 14px);
+  color: var(--muted);
+  min-height: 3.6em;
+}
+
+.skin-detail b {
+  font-family: var(--display);
+  color: var(--gold);
+  font-size: 1.1em;
+}
+
+.skin-detail em {
+  font-style: normal;
+  color: var(--mint);
+}
+
+.pip-count {
+  flex-shrink: 0;
+  padding-inline: 0.3em;
+  font-family: var(--display);
+  font-size: clamp(12px, 3.4cqmin, 16px);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .act-skill.ready {
+    animation: none;
+  }
+}
