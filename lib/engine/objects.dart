@@ -1,6 +1,6 @@
 // Living platforms and world objects: folding leaves, crumbling slabs, launch
 // flowers, wind gusts, shrines, pickups, cracked walls, lift, rope and bell.
-// Port of game js/game/objects.js.
+
 import 'dart:math' as math;
 
 import 'entities.dart';

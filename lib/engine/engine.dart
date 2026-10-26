@@ -1,5 +1,5 @@
 // Skyroot — The Last Archer. Owns the run's state and wires the systems together.
-// Port of game js/game/game.js (without the DOM/HUD, which live in Flutter widgets).
+
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show ChangeNotifier;

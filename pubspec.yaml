@@ -35,8 +35,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
-  # Flame game engine
-  flame: ^1.21.0
 
   audioplayers: ^6.1.0
 
@@ -65,10 +63,9 @@ flutter:
   uses-material-design: true
 
   # Assets used by the Skyroot Flame game. Images live in assets/images,
-  # the asset manifest and reference json live in assets/json.
+  # sprite frames, maps and the asset manifest live in assets/game.
   assets:
     - assets/images/
-    - assets/json/
     - assets/game/
     - assets/game/frames/
     - assets/game/audio/

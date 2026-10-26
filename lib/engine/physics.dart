@@ -1,4 +1,4 @@
-// Tile collision for axis-aligned bodies. Port of game js/game/physics.js.
+// Tile collision for axis-aligned bodies.
 import 'dart:math' as math;
 
 import 'entities.dart';
@@ -6,7 +6,7 @@ import 'world.dart';
 
 const _eps = 0.001;
 
-/// JS-style Math.round: halves round up, so negative halves match the original.
+/// Math.round semantics: halves round up, so negative halves match the original.
 int jsRound(double v) => (v + 0.5).floor();
 
 extension Physics on World {

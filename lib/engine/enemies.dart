@@ -1,6 +1,6 @@
 // Thorn Guards (straight bursts from a nest), Shield Beetles (front plate blocks
 // arrows), Cannon Frogs (lobbed mud with a ground marker), plus the upper-area
-// monsters. Port of game js/game/enemies.js.
+// upper-area monsters.
 import 'dart:math' as math;
 
 import 'content.dart';

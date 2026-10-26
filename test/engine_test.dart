@@ -28,7 +28,7 @@ void main() {
     }
   });
 
-  test('player physics match the original JS frame by frame', () {
+  test('player physics match the reference trajectories frame by frame', () {
     final ref = jsonDecode(File('test/fixtures/player_ref.json').readAsStringSync()) as List;
     for (final run in ref) {
       final area = run['area'] as int;
@@ -48,7 +48,7 @@ void main() {
         gravity: area == 10 ? 0.7 : 1,
         skin: skin,
       );
-      // Same deterministic input script as tools/ref-trajectory.mjs.
+      // Same deterministic input script that produced the reference trajectories.
       var s = run['seed'] as int;
       double rnd() {
         s = (s * 48271) % 2147483647;

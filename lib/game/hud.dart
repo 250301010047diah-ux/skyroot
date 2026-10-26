@@ -1,6 +1,6 @@
 // HUD and overlay panels: hearts, energy, boss bar, toast, speech bubble, map,
-// wardrobe, pause menu, tutorial and ending. Port of game js/game/hud.js and the
-// Android host chrome (game js/android.html).
+// wardrobe, pause menu, tutorial and ending.
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';

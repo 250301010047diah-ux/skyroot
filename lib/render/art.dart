@@ -1,6 +1,6 @@
 // Loads sprite sheets, their frame sidecars and single images from the bundled
 // assets. Core art loads at start; each area's backdrop/monsters/boss and each
-// skin's sheets load on demand. Port of game js/game/loader.js.
+// skin sheets load on demand.
 import 'dart:convert';
 import 'dart:ui' as ui;
 

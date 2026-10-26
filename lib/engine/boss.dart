@@ -1,5 +1,5 @@
-// Bosses. Port of game js/game/boss.js (Rusa Menara, the Tower Stag) and
-// game js/game/bossGeneric.js (the ten upper-area bosses).
+// Rusa Menara (the Tower Stag) and
+// The ten upper-area bosses.
 import 'dart:math' as math;
 
 import 'content.dart';

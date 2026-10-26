@@ -1,4 +1,4 @@
-// Progress kept between sessions (small, versioned JSON). Port of game js/game/save.js.
+// Progress kept between sessions (small, versioned JSON).
 import 'dart:math' as math;
 
 const areaCount = 11;

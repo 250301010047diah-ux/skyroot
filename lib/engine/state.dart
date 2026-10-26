@@ -1,4 +1,4 @@
-// The one object that holds everything a run needs. Port of the `state` object in game.js.
+// The one object that holds everything a run needs.
 import 'boss.dart';
 import 'content.dart';
 import 'entities.dart';

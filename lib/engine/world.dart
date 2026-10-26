@@ -1,5 +1,5 @@
 // Static world: the active area's tile grid + spawn list, parsed from its ASCII map.
-// Port of game js/game/world.js.
+
 //
 // Glyphs:
 //   #  bark (solid)          S  soft heartwood (solid, Footing Arrows stick)   W  moss wall (wall jump)

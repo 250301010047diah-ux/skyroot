@@ -1,5 +1,5 @@
 // The bow (aim, quick shot, full draw, Air Focus), arrows in flight, Footing
-// Arrow steps, and enemy projectiles. Port of game js/game/combat.js.
+// Arrow steps, and enemy projectiles.
 import 'dart:math' as math;
 
 import 'entities.dart';

@@ -110,7 +110,7 @@ class _MainMenuState extends State<MainMenu> {
     _loadProgress();
   }
 
-  /// A save from the WebView build lives in native storage; adopt it the first time.
+  /// Progress saved by the earlier native build is adopted the first time.
   Future<Progress?> _migrateLegacy() async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return null;
     try {

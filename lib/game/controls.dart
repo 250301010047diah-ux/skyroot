@@ -1,6 +1,6 @@
 // Touch controls: a floating joystick on the left and game-pad buttons on the
 // right. They only record intent into the engine's InputState (see
-// game js/game/input.js); the simulation acts on it each tick.
+// input); the simulation acts on it each tick.
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';

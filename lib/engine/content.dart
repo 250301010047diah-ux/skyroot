@@ -1,5 +1,4 @@
 // Game content tables: the 11 areas, their monsters and bosses, and the 11 archer skins.
-// Port of game js/game/content.js.
 
 /// Monster behaviours: diver (hover then swoop), flyer (drifts toward you), archer (lobs shots),
 /// hopper (leaps at you), dropper (drops on a thread, spits web), walkerLob (patrols, throws fire),

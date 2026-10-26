@@ -1,5 +1,5 @@
 // The archer: movement, climbing, ledge grabs, wall jumps, dash, and the bow.
-// Port of game js/game/player.js.
+
 import 'dart:math' as math;
 
 import 'entities.dart';

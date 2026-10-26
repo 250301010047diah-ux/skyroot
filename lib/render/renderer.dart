@@ -1,5 +1,5 @@
 // Canvas renderer: reads the engine state and draws the world. Never changes
-// gameplay state. Port of game js/game/render.js.
+// gameplay state.
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 

@@ -1,6 +1,6 @@
 // The playable screen: boots the engine, runs the fixed-step loop, paints the
 // world and hosts the HUD, touch controls and panels.
-// Replaces the WebView host (game js/android-main.js).
+
 import 'dart:convert';
 import 'dart:math' as math;
 

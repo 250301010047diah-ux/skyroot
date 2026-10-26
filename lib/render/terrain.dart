@@ -1,6 +1,6 @@
 // Terrain is drawn from the 47-tile blob atlas (assets/images/atlas.png).
 // Masks use clockwise N, NE, E, SE, S, SW, W, NW bits and sorted valid masks.
-// Port of game js/offline-terrain.js + game js/game/terrain.js.
+
 import 'dart:ui' as ui;
 
 import '../engine/world.dart';
