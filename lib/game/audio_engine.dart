@@ -1,140 +1,151 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 
-/// Plays background music on a dedicated looping player and one-shot SFX on
-/// independent players so the music never stops when an effect fires.
+/// App-wide audio: looping background music (from the main menu onward) plus a
+/// small round-robin pool for one-shot effects, so the music never stops when
+/// an effect fires.
 class AudioEngine {
+  AudioEngine._();
+
+  /// One engine for the whole app, so the music keeps playing from menu to game.
+  static final AudioEngine instance = AudioEngine._();
+
   static const _prefix = 'game/audio/';
+  static const _poolSize = 8;
 
-  final AudioPlayer _bgmPlayer = AudioPlayer();
-  final bool _enabledInitially;
-  bool _enabled;
-  bool _bgmStarted = false;
-  int _stage = 0;
-  String? _playingBgm;
-  bool _endPlayed = false;
+  /// Every effect the engine can ask for; each maps to `assets/game/audio/NAME.mp3`.
+  static const sfxNames = {
+    'relic', 'jump', 'land', 'dash', 'hurt', 'shoot', 'thunk', 'sprout', 'footfail', 'noenergy', 'crack', 'crumble',
+    'leaf', 'launch', 'spit', 'lob', 'splat', 'defeat', 'block', 'checkpoint', 'lift', 'rope', 'stomp', 'nodeBreak',
+    'bell', 'pickup', 'win',
+  };
 
-  double sfxVolume = 0.25;
+  final AudioPlayer _bgm = AudioPlayer();
+  final List<AudioPlayer> _pool = [];
+  final Map<String, int> _lastPlayed = {};
+  final Stopwatch _clock = Stopwatch()..start();
+  int _next = 0;
+  bool _muted = false;
+  bool _suspended = false;
+  bool _started = false;
+  int _area = 0;
+
+  /// Track currently loaded in the music player and whether it is playing.
+  String? _loaded;
+  bool _playing = false;
+
+  /// Music commands run one after another, so start/pause/resume never race.
+  Future<void> _queue = Future.value();
+
+  double sfxVolume = 0.6;
   double bgmVolume = 0.35;
 
-  AudioEngine({bool enabled = true})
-    : _enabled = enabled,
-      _enabledInitially = enabled;
-
   AudioContext _mixContext() => AudioContext(
-    android: AudioContextAndroid(
-      isSpeakerphoneOn: false,
-      stayAwake: false,
-      contentType: AndroidContentType.music,
-      usageType: AndroidUsageType.media,
-      audioFocus: AndroidAudioFocus.none,
-    ),
-    iOS: AudioContextIOS(
-      category: AVAudioSessionCategory.playback,
-      options: const <AVAudioSessionOptions>{
-        AVAudioSessionOptions.mixWithOthers,
-      },
-    ),
-  );
+        android: const AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          stayAwake: false,
+          contentType: AndroidContentType.music,
+          usageType: AndroidUsageType.media,
+          audioFocus: AndroidAudioFocus.none,
+        ),
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.playback,
+          options: const <AVAudioSessionOptions>{AVAudioSessionOptions.mixWithOthers},
+        ),
+      );
 
-  void unlock() {
-    _enabled = _enabledInitially;
-    if (!_bgmStarted) unawaited(_startBgm());
+  bool get muted => _muted;
+
+  /// Starts the music; safe to call repeatedly (main menu and game both do).
+  void start() {
+    _started = true;
+    _apply();
   }
 
-  void setStage(int stage) {
-    _stage = stage;
-    if (_bgmStarted) unawaited(_startBgm());
+  /// Five tracks cover the eleven areas; the menu uses the first.
+  void setArea(int area) {
+    _area = area;
+    _apply();
   }
 
-  void setEnabled(bool value) {
-    _enabled = value;
-    if (_enabled) {
-      unawaited(_startBgm());
-    } else {
-      unawaited(_bgmPlayer.stop());
+  void setMuted(bool value) {
+    _muted = value;
+    _apply();
+  }
+
+  /// The app went to the background.
+  void suspend() {
+    _suspended = true;
+    _apply();
+  }
+
+  void resume() {
+    _suspended = false;
+    _apply();
+  }
+
+  void _apply() {
+    _queue = _queue.then((_) => _sync()).catchError((Object e) {
+      debugPrint('[bgm] failed: $e');
+      // Audio is best-effort; a failed command must not block the next one.
+      _loaded = null;
+      _playing = false;
+    });
+  }
+
+  Future<void> _sync() async {
+    final want = _started && !_muted && !_suspended;
+    final track = 'bgm${math.min(5, (_area ~/ 2) + 1)}.mp3';
+    if (!want) {
+      if (_playing) {
+        await _bgm.pause();
+        _playing = false;
+      }
+      return;
+    }
+    if (_loaded != track) {
+      // play() swaps the source itself; stop()/context juggling first left MediaPlayer idle.
+      await _bgm.setReleaseMode(ReleaseMode.loop);
+      await _bgm.play(AssetSource('$_prefix$track'), volume: bgmVolume);
+      _loaded = track;
+      _playing = true;
+    } else if (!_playing) {
+      await _bgm.resume();
+      _playing = true;
     }
   }
 
-  Future<void> _startBgm() async {
-    if (!_enabled) return;
-    final track = 'bgm${(_stage ~/ 2) + 1}.mp3';
-    if (_playingBgm == track) return;
-    _bgmStarted = true;
-    try {
-      await _bgmPlayer.setAudioContext(_mixContext());
-      await _bgmPlayer.stop();
-      await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
-      await _bgmPlayer.setVolume(bgmVolume);
-      await _bgmPlayer.play(AssetSource('$_prefix$track'));
-      _playingBgm = track;
-    } catch (_) {
-      _bgmStarted = false;
+  AudioPlayer _nextPlayer() {
+    if (_pool.length < _poolSize) {
+      final p = AudioPlayer()..setPlayerMode(PlayerMode.lowLatency);
+      unawaited(p.setAudioContext(_mixContext()));
+      _pool.add(p);
+      return p;
     }
+    final p = _pool[_next];
+    _next = (_next + 1) % _poolSize;
+    return p;
   }
 
-  Future<void> _play(String filename, {double volumeScale = 1}) async {
-    if (!_enabled) return;
-    final player = AudioPlayer();
-    try {
-      await player.setAudioContext(_mixContext());
-      await player.setVolume((sfxVolume * volumeScale).clamp(0, 1).toDouble());
-      player.onPlayerComplete.listen((_) {
-        unawaited(player.dispose());
-      });
-      await player.play(AssetSource('$_prefix$filename'));
-    } catch (_) {
-      await player.dispose();
-    }
-  }
-
-  void jump() => unawaited(_play('jump.mp3'));
-  void shoot() => unawaited(_play('shoot.mp3'));
-  void hurt() => unawaited(_play('hurt.mp3'));
-  void pickup() => unawaited(_play('pickup.mp3'));
-  void win() {
-    if (_endPlayed) return;
-    _endPlayed = true;
-    unawaited(_play('win.mp3', volumeScale: 1.2));
-    unawaited(_play('relic.mp3'));
-    unawaited(_play('sprout.mp3'));
-  }
-
-  void gameOver() {
-    if (_endPlayed) return;
-    _endPlayed = true;
-    unawaited(_play('defeat.mp3'));
-  }
-
-  // --- SFX pemicu gameplay lainnya ---
-  void bell() => unawaited(_play('bell.mp3'));
-  void block() => unawaited(_play('block.mp3'));
-  void checkpoint() => unawaited(_play('checkpoint.mp3'));
-  void crack() => unawaited(_play('crack.mp3'));
-  void crumble() => unawaited(_play('crumble.mp3'));
-  void dash() => unawaited(_play('dash.mp3'));
-  void footfail() => unawaited(_play('footfail.mp3'));
-  void land() => unawaited(_play('land.mp3'));
-  void launch() => unawaited(_play('launch.mp3'));
-  void leaf() => unawaited(_play('leaf.mp3'));
-  void lift() => unawaited(_play('lift.mp3'));
-  void lob() => unawaited(_play('lob.mp3'));
-  void nodeBreak() => unawaited(_play('nodeBreak.mp3'));
-  void relic() => unawaited(_play('relic.mp3'));
-  void noenergy() => unawaited(_play('noenergy.mp3'));
-  void rope() => unawaited(_play('rope.mp3'));
-  void spit() => unawaited(_play('spit.mp3'));
-  void splat() => unawaited(_play('splat.mp3'));
-  void stomp() => unawaited(_play('stomp.mp3'));
-  void thunk() => unawaited(_play('thunk.mp3'));
-
-  void resetEnd() {
-    _endPlayed = false;
-    unawaited(_startBgm());
-  }
-
-  Future<void> dispose() async {
-    await _bgmPlayer.dispose();
+  /// Plays effect [name]; [loud] raises the volume a little (hard landing, full draw).
+  void play(String name, {bool loud = false}) {
+    if (_muted || _suspended || !sfxNames.contains(name)) return;
+    // The same effect firing every frame (burning, rain) would just be noise.
+    final now = _clock.elapsedMilliseconds;
+    if (now - (_lastPlayed[name] ?? -1000) < 45) return;
+    _lastPlayed[name] = now;
+    final volume = (sfxVolume * (loud ? 1.25 : 1)).clamp(0.0, 1.0);
+    final player = _nextPlayer();
+    unawaited(() async {
+      try {
+        await player.stop();
+        await player.play(AssetSource('$_prefix$name.mp3'), volume: volume, mode: PlayerMode.lowLatency);
+      } catch (_) {
+        // Audio is best-effort; gameplay never waits for it.
+      }
+    }());
   }
 }

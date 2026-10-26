@@ -10,13 +10,13 @@ void main() {
     SharedPreferences.setMockInitialValues({'progress': 85, 'stage': 8});
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-          originalProgress,
+          legacyProgress,
           (MethodCall call) async => null,
         );
   });
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(originalProgress, null);
+        .setMockMethodCallHandler(legacyProgress, null);
   });
 
   testWidgets('main menu renders', (tester) async {

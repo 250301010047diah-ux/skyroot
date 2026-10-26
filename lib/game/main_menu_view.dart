@@ -520,11 +520,13 @@ class MainMenuView extends StatelessWidget {
     ),
   );
 
-  Widget _settingsCard(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: _panel,
+  // A Material (not a decorated Container) so the ListTiles can paint ink on it.
+  Widget _settingsCard(BuildContext context) => Material(
+    color: _panel,
+    clipBehavior: Clip.antiAlias,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: const Color(0x2aefcb80)),
+      side: const BorderSide(color: Color(0x2aefcb80)),
     ),
     child: Column(
       children: [
