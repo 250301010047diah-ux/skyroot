@@ -27,7 +27,13 @@ class MainMenuView extends StatelessWidget {
     required this.onReset,
     required this.lightMode,
     required this.onLightMode,
+    required this.unlocked,
+    required this.rich,
+    required this.onUnlockAll,
   });
+  final int unlocked;
+  final bool rich;
+  final VoidCallback onUnlockAll;
   final List<String> areas, skinNames;
   final List<(String, String)> themes;
   final int stage, skin, progress;
@@ -208,6 +214,8 @@ class MainMenuView extends StatelessWidget {
                           : 'MULAI PETUALANGAN',
                       onPressed: onPlay,
                     ),
+                    const SizedBox(height: 10),
+                    _richButton(),
                     const SizedBox(height: 14),
                     _progressCard(),
                     const SizedBox(height: 26),
@@ -229,6 +237,7 @@ class MainMenuView extends StatelessWidget {
                           title: areas[index],
                           tag: (index + 1).toString().padLeft(2, '0'),
                           selected: stage == index,
+                          locked: index > unlocked,
                           onTap: () => onArea(index),
                           child: Image.asset(
                             themes[index].$2,
@@ -256,6 +265,7 @@ class MainMenuView extends StatelessWidget {
                         itemBuilder: (context, index) => _ChoiceCard(
                           title: skinNames[index],
                           selected: skin == index,
+                          locked: !rich && index > unlocked,
                           onTap: () => onSkin(index),
                           child: DecoratedBox(
                             decoration: const BoxDecoration(
@@ -490,9 +500,9 @@ class MainMenuView extends StatelessWidget {
           children: [
             const Icon(Icons.eco_rounded, size: 18, color: _mint),
             const SizedBox(width: 8),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Semua wilayah & skin terbuka',
+                rich ? 'Semua wilayah & skin terbuka' : 'Terbuka ${unlocked + 1}/11 wilayah & skin',
                 style: TextStyle(color: _mint, fontSize: 12),
               ),
             ),
@@ -517,6 +527,45 @@ class MainMenuView extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+
+  Widget _richButton() => Material(
+    color: _panel,
+    borderRadius: BorderRadius.circular(18),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: rich ? null : onUnlockAll,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: _edge, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.monetization_on_rounded, color: _goldHi, size: 24),
+            const SizedBox(width: 8),
+            Text(
+              rich ? '999+' : '0',
+              style: const TextStyle(color: _goldHi, fontSize: 18, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                rich ? 'Koin tak terbatas · semua terbuka' : 'DAPATKAN 999+ KOIN & BUKA SEMUA',
+                style: TextStyle(
+                  color: rich ? _mint : _gold,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: .5,
+                ),
+              ),
+            ),
+            Icon(rich ? Icons.all_inclusive_rounded : Icons.lock_open_rounded, color: _mint, size: 20),
+          ],
+        ),
+      ),
     ),
   );
 
@@ -750,7 +799,9 @@ class _ChoiceCard extends StatelessWidget {
     required this.onTap,
     required this.child,
     this.tag,
+    this.locked = false,
   });
+  final bool locked;
   final String title;
   final String? tag;
   final bool selected;
@@ -782,6 +833,11 @@ class _ChoiceCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             RepaintBoundary(child: child),
+            if (locked)
+              const ColoredBox(
+                color: Color(0xb3061410),
+                child: Center(child: Icon(Icons.lock_rounded, color: _gold, size: 30)),
+              ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(

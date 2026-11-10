@@ -52,7 +52,8 @@ class AreaProgress {
 class Progress {
   Progress({
     this.area = 0,
-    this.unlocked = areaCount - 1,
+    this.unlocked = 0,
+    this.rich = false,
     this.skin = 0,
     this.footing = false,
     this.dash = false,
@@ -69,6 +70,8 @@ class Progress {
 
   int area, unlocked, skin, maxHp, maxEnergy, deaths;
   bool footing, dash, rope, lift, bell, feather;
+  /// Set by the main-menu "999+" button: endless coins and everything open.
+  bool rich;
   double time;
   final List<AreaProgress> areas;
 
@@ -97,11 +100,14 @@ class Progress {
     if (m['v'] != 2) return Progress();
     final rawAreas = m['areas'];
     final abil = m['abilities'];
-    const unlocked = areaCount - 1;
+    final rich = m['rich'] == true;
+    final unlocked = rich ? areaCount - 1 : _clampInt(m['unlocked'], 0, areaCount - 1, 0);
+    final skin = _clampInt(m['skin'], 0, areaCount - 1, 0);
     return Progress(
       area: math.min(_clampInt(m['area'], 0, areaCount - 1, 0), unlocked),
       unlocked: unlocked,
-      skin: _clampInt(m['skin'], 0, areaCount - 1, 0),
+      rich: rich,
+      skin: skin <= unlocked ? skin : 0,
       footing: abil is Map && abil['footing'] == true,
       dash: abil is Map && abil['dash'] == true,
       maxHp: _clampInt(m['maxHp'], 3, 14, 3),
@@ -123,6 +129,7 @@ class Progress {
         'v': 2,
         'area': area,
         'unlocked': unlocked,
+        'rich': rich,
         'skin': skin,
         'abilities': {'footing': footing, 'dash': dash},
         'maxHp': maxHp,
@@ -146,7 +153,12 @@ class Progress {
     return n;
   }
 
-  /// All existing skins are available; boss/checkpoint progress stays independent.
-  bool skinOwned(int skin) => skin >= 0 && skin < areaCount;
-  int get skinsOwned => areaCount;
+  /// Skin i opens together with area i (or everything once [rich]).
+  bool skinOwned(int skin) => skin >= 0 && skin < areaCount && (rich || skin <= unlocked);
+  int get skinsOwned => rich ? areaCount : unlocked + 1;
+
+  void unlockAll() {
+    rich = true;
+    unlocked = areaCount - 1;
+  }
 }

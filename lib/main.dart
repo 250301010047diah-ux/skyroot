@@ -68,6 +68,8 @@ class _MainMenuState extends State<MainMenu> {
   int _selectedStage = 0;
   bool _hasSave = false;
   bool _lightMode = true;
+  int _unlocked = 0;
+  bool _rich = false;
 
   static final _areas = [for (final a in areas) a.name];
   static const _themes = [
@@ -135,10 +137,12 @@ class _MainMenuState extends State<MainMenu> {
     setState(() {
       _lightMode = prefs.getBool('lightMode') ?? true;
       _hasSave = saved != null;
+      _unlocked = saved?.unlocked ?? 0;
+      _rich = saved?.rich ?? false;
       _savedProgress = saved == null ? 0 : (saved.areas.where((a) => a.boss).length * 100 / 11).round();
-      _selectedStage = (saved?.area ?? prefs.getInt('stage') ?? 0).clamp(0, 10);
+      _selectedStage = (saved?.area ?? prefs.getInt('stage') ?? 0).clamp(0, _unlocked);
       _selectedTheme = _themes[_selectedStage].$1;
-      _selectedSkin = _skins[(saved?.skin ?? 0).clamp(0, 10)].$1;
+      _selectedSkin = _skins[(saved?.skin ?? 0).clamp(0, _rich ? 10 : _unlocked)].$1;
     });
   }
 
@@ -164,6 +168,27 @@ class _MainMenuState extends State<MainMenu> {
     await prefs.setInt('stage', index);
   }
 
+  Future<void> _unlockAll() async {
+    final p = await SaveStore.load() ?? Progress();
+    p.unlockAll();
+    await SaveStore.save(p);
+    if (!mounted) return;
+    setState(() {
+      _rich = true;
+      _unlocked = 10;
+      _hasSave = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Koin 999+ tak terbatas! Semua wilayah & skin terbuka.')),
+    );
+  }
+
+  void _locked(String what) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('$what masih terkunci.')));
+  }
+
   Future<void> _resetProgress() async {
     await SaveStore.clear();
     final prefs = await SharedPreferences.getInstance();
@@ -174,6 +199,8 @@ class _MainMenuState extends State<MainMenu> {
     setState(() {
       _savedProgress = 0;
       _hasSave = false;
+      _unlocked = 0;
+      _rich = false;
       _selectedStage = 0;
       _selectedTheme = _themes.first.$1;
       _selectedSkin = _skins.first.$1;
@@ -206,8 +233,11 @@ class _MainMenuState extends State<MainMenu> {
     skin: _skinIndex,
     progress: _savedProgress,
     hasSave: _hasSave,
-    onArea: _selectThemeAt,
-    onSkin: (index) => _selectSkin(_skins[index].$1),
+    unlocked: _unlocked,
+    rich: _rich,
+    onUnlockAll: _unlockAll,
+    onArea: (i) => i <= _unlocked ? _selectThemeAt(i) : _locked('Wilayah ini'),
+    onSkin: (i) => _rich || i <= _unlocked ? _selectSkin(_skins[i].$1) : _locked('Skin ini'),
     onPlay: _startGame,
     onReset: _resetProgress,
     lightMode: _lightMode,

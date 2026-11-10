@@ -28,7 +28,7 @@ void main() {
   });
 
   testWidgets(
-    'all original themes and skins are selectable, also after reset',
+    'areas and skins are locked until the 999+ button, and lock again after reset',
     (tester) async {
       await tester.pumpWidget(const SkyrootApp());
       await tester.pumpAndSettle();
@@ -36,6 +36,8 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       for (var pass = 0; pass < 2; pass++) {
         if (pass == 1) {
+          await tester.pump(const Duration(seconds: 6));
+          await tester.pumpAndSettle();
           await tester.ensureVisible(find.text('RESET PROGRESS'));
           await tester.tap(find.text('RESET PROGRESS'));
           await tester.pumpAndSettle();
@@ -43,6 +45,11 @@ void main() {
           await tester.tap(find.text('YA, RESET'));
           await tester.pumpAndSettle();
         }
+        expect(find.byIcon(Icons.lock_rounded), findsWidgets);
+        await tester.ensureVisible(find.text('DAPATKAN 999+ KOIN & BUKA SEMUA'));
+        await tester.tap(find.text('DAPATKAN 999+ KOIN & BUKA SEMUA'));
+        await tester.pumpAndSettle();
+        expect(find.text('999+'), findsOneWidget);
         await tester.ensureVisible(find.byType(ListView).at(0));
         await tester.dragUntilVisible(
           find.text('Mahkota Bintang'),
@@ -62,7 +69,7 @@ void main() {
         await tester.tap(find.text('Mahkota Akar'));
         await tester.pumpAndSettle();
         expect(prefs.getString('skin'), 'skin10_a-transparent.webp');
-        expect(find.byIcon(Icons.lock), findsNothing);
+        expect(find.byIcon(Icons.lock_rounded), findsNothing);
       }
     },
   );
